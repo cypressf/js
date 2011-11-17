@@ -1,0 +1,44 @@
+body{background:#000}
+.block{
+    position:absolute;
+    top:100;
+    left:100;
+    margin:0;padding:0;
+    background: url('b.jpg')  no-repeat center center fixed #9df;
+    background-size: cover;
+    width:400px;
+    height:400px;
+    text-align:center;
+    -webkit-user-select:none;
+    cursor:-webkit-grab;
+} 
+.block:active{cursor:-webkit-grabbing;}
+.handle{position:absolute;}
+
+.left,.right{width:20px;}
+.bottom,.top{height:20px;}
+
+.side.left,.side.right{top:0;bottom:0;cursor:col-resize;}
+.side.bottom,.side.top{right:0;left:0;cursor:row-resize;}
+
+.corner{z-index:1000;}
+
+.top.right{cursor:ne-resize}
+.top.left{cursor:nw-resize}
+
+.bottom.right{cursor:se-resize}
+.bottom.left{cursor:sw-resize;}
+
+.left{left:-10;}
+.right{right:-10;}
+.top{top:-10;}
+.bottom{bottom:-10;}
+
+body.left *, body.right *{cursor:col-resize !important;}
+body.top *, body.bottom *{cursor:row-resize !important;}
+body.grabbing *{cursor:-webkit-grabbing !important;cursor:-moz-grabbing !important;}
+body.grab *{cursor:-webkit-grab !important;cursor:-moz-grab !important;}
+body.top.right *{cursor:ne-resize !important;}
+body.top.left *{cursor:nw-resize !important;}
+body.bottom.right *{cursor:se-resize !important;}
+body.bottom.left *{cursor:sw-resize !important;}
