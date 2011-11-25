@@ -10,6 +10,8 @@ body p{
     margin-top:-1.25em;
     margin-left:-4.5em;
     line-height:1em;
+    -webkit-user-select:none;
+    -moz-user-select:none;
 }
 .block{
     position:absolute;
