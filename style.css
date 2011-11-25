@@ -1,27 +1,54 @@
-body{background:#000}
+body{background:url('background.png') #e0d4c0 no-repeat center center ;overflow:scroll;font-family:sans-serif;
+}
+body p{
+    color:#76664D;
+    font-weight:400;
+    font-size:2em;
+    position:absolute;
+    top:50%;
+    left:50%;
+    margin-top:-1.25em;
+    margin-left:-4.5em;
+    line-height:1em;
+}
 .block{
     position:absolute;
     top:100;
     left:100;
     margin:0;padding:0;
-    background: url('b.jpg')  no-repeat center center fixed #9df;
+    background:  url('b.jpg') no-repeat center center fixed #9df;
     background-size: cover;
     width:400px;
     height:400px;
     text-align:center;
     -webkit-user-select:none;
+    -moz-user-select:none;
     cursor:-webkit-grab;
+    cursor:-moz-grab;
+    color:#fff;
+    border-radius:10px;
+    box-shadow:0px 0px 8px #000;
+    -webkit-transition:.2s box-shadow; -moz-transition: .2s box-shadow;
 } 
-.block:active{cursor:-webkit-grabbing;}
-.handle{position:absolute;}
+.block:hover{box-shadow:0px 0px 15px #000;-webkit-transition:.2s box-shadow; -moz-transition: .2s box-shadow;}
 
+.block *{
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -webkit-user-drag:none;
+}
+.block:active{cursor:-webkit-grabbing;cursor:-moz-grabbing;}
+.block div{position:absolute;}
+.block a , .block a.hidden, .block:hover a.hidden{display:block;-webkit-transition:.2s opacity;-moz-transition:.2s opacity;font-size:2em;line-height:.5em;background: rgb(255,0,0); opacity:0;cursor:pointer; text-decoration:none; color:rgb(255,255,255); height:20px; width:20px; position:absolute; top:-20px;left:-20px;padding:10px;border-radius:20px;z-index:2000;}
+.block:hover a:hover{opacity:1;-webkit-transition:.2s opacity;-moz-transition:.2s opacity;}
+.block:hover a{opacity:0.3;-webkit-transition:.2s opacity;-moz-transition:.2s opacity;}
 .left,.right{width:20px;}
 .bottom,.top{height:20px;}
 
-.side.left,.side.right{top:0;bottom:0;cursor:col-resize;}
-.side.bottom,.side.top{right:0;left:0;cursor:row-resize;}
+.block div:not(.bottom):not(.top){top:0;bottom:0;cursor:col-resize;}
+.block div:not(.right):not(.left){right:0;left:0;cursor:row-resize;}
 
-.corner{z-index:1000;}
+.top.left,.top.right,.bottom.left,.bottom.right{}
 
 .top.right{cursor:ne-resize}
 .top.left{cursor:nw-resize}

@@ -6,10 +6,43 @@ function initializer(){
 
 var main = {
     po: Object,
+    num: 0,
+    moveables: [],
+    test: this,
     init: function(){
-        this.po = new moveable("pinky");
-        this.po.update();
+        console.log("starting");
+        addEvent(document,"mousedown",this.newMoveable);
     },
+    newMoveable: function(event){
+        main.moveables = main.moveables.concat(new moveable("moveable" + main.num,[event.pageX-20,event.pageY-20],[0,0]));
+        var handle = main.moveables[main.num].handles[6];
+        main.moveables[main.num].update();
+        handle.mouseInit = [event.pageX, event.pageY];
+        handle.sizeInit = [handle.container.size[0], handle.container.size[1]];
+        handle.positionInit = [handle.container.position[0], handle.container.position[1]];
+        main.moveables[main.num].deleter.classList.add("hidden");
+        document.body.classList.add("bottom");
+        document.body.classList.add("right");
+        addEvent(document, "mousemove", main.resizeMoveable);
+        addEvent(document, "mouseup", main.endNewMoveable);
+    },
+    endNewMoveable: function(event){
+        main.moveables[main.num].deleter.classList.remove("hidden");
+        document.body.classList.remove("bottom");
+        document.body.classList.remove("right");
+        removeEvent(document, "mousemove", main.resizeMoveable);
+        removeEvent(document, "mouseup", main.endNewMoveable);
+        main.num += 1;
+    },
+    resizeMoveable: function(event){
+        main.moveables[main.num].handles[6].drag(event);
+    },
+    removeMoveable: function(moveable){
+        console.log("moveable" + moveable.id + " was removed");
+        document.body.removeChild(moveable.element);
+        main.moveables.pop(moveable);
+        main.num -= 1;
+    }
 }
 
 /* Cypress's Generic Helpful Library */
@@ -32,85 +65,120 @@ function removeEvent(element, eventName, callback) {
     }
 }
 
+function makeElement(type, id, classes, parent){
+    var element = document.createElement(type);
+    element.id = id;
+    for(var i in classes){
+        element.classList.add(classes[i]);
+    }
+    parent.appendChild(element);
+    return element;
+}
+
 /* moveable */
-function moveable(element){
-    console.log("creating moveable: " + element);
-    that = this;
-    this.element = document.getElementById(element);
-    this.position = [100,100];
-    this.size = [100,100];
+function moveable(id,position,size){
+    console.log("creating moveable: " + id);
+    this.id = id;
+    var that = this;
+    this.element = makeElement("div",id,["block"],document.body);
+    this.position = position;
+    this.size = size;
     this.maxposition = [10000, 10000];
     this.minposition = [-10000, -10000];
     this.maxsize = [20000, 30000];
     this.minsize = [20, 20];
+    for (var i = 0; i < 2; i ++){
+        if(size[i] > this.maxsize[i]){
+            this.size[i] = this.maxsize[i];
+        }
+        if(size[i] < this.minsize[i]){
+            this.size[i] = this.minsize[i];
+        }
+        if(position[i] > this.maxposition[i]){
+            this.position[i] = this.maxposition[i];
+        }
+        if(position[i] < this.minposition[i]){
+            this.position[i] = this.minposition[i];
+        }
+    }
     this.handles = [];
+    var deleteLink = document.createElement("a");
+    this.deleter = this.element.appendChild(deleteLink);
+    this.deleter.innerHTML = "x";
+    this.deleter.setAttribute("href","#delete" + id);
+    this.deleter.draggable = false;
+    
+    
+this.createHandles = function() {
+    var sides = {"top":["top"],"right":["right"],"bottom":["bottom"],"left":["left"],"tr":["top", "right"],"tl":["top", "left"],"br":["bottom", "right"],"bl":["bottom", "left"]}
+    for(i in sides){
+        this.handles = this.handles.concat(new resizer(this, sides[i], i));
+    }
+}
     this.createHandles();
+
+    
+    this.resize = function(sizeChange, sides){
+        this.size.add(sizeChange);
+    }
+
+    this.update = function(){
+        this.element.style.width = this.size[0];
+        this.element.style.height = this.size[1];
+        this.element.style.left = this.position[0];
+        this.element.style.top = this.position[1];
+    }
+
+    this.beginMove = function(event){
+        event.stopPropagation();
+        document.body.classList.add("grabbing");
+        that.mouseDiff = [that.position[0] - event.pageX, that.position[1] - event.pageY];
+        console.log("beginMove");
+        addEvent(document, 'mousemove', that.move);
+        addEvent(document, 'mouseup', that.endMove);
+    }
+
+    this.move = function(event){
+        that.position = [event.pageX + that.mouseDiff[0], event.pageY + that.mouseDiff[1]];
+        that.update();
+    }
+
+    this.endMove = function(event){
+        console.log('endMove');
+        document.body.classList.remove("grabbing");
+        removeEvent(document, 'mousemove', that.move);
+        removeEvent(document, 'mouseup', that.endMove);
+    }
+
+    this.setValue = function(possize, value, xy){
+        if (value > this["max" + possize][xy]){value = this["max" + possize][xy];}
+        if (value < this["min" + possize][xy]){value = this["min" + possize][xy];}
+        this[possize][xy] = value;
+    }
+
+    this.startRemove = function(event){
+        console.log("starting remove");
+        event.stopPropagation();
+        addEvent(document, 'mouseup', that.remove);
+    }
+    this.remove = function(event){
+        main.removeMoveable(that);
+        removeEvent(document, "mouseup", that.remove);
+    }
+
     addEvent(this.element, "mousedown", this.beginMove);
+    addEvent(this.deleter, "mousedown", this.startRemove);
 }
 
-/* todo: right now, this creates each handle object based on
-the html (UGLY AND BAD). I want to create the html based on the handle objects. */
-moveable.prototype.createHandles = function() {
-    var handles = this.element.getElementsByClassName("handle");
-    var handle;
-    var sides;
-    for(var l = 0, k = handles.length; l < k; l++){
-        handle = handles.item(l);
-        sides = [];
-        for(var i = 0, j = handle.classList.length; i < j; i++){
-            var t = handle.classList[i];
-            if(t ==="top" || t === "left" || t === "right" || t === "bottom"){
-                sides = sides.concat(handle.classList[i]);
-            }
-        }
-        this.handles = this.handles.concat(new resizer(handle,this,sides));
-    }
-};
 
-moveable.prototype.resize = function(sizeChange, sides){
-    this.size.add(sizeChange);
-};
-
-moveable.prototype.update = function(){
-    this.element.style.width = this.size[0];
-    this.element.style.height = this.size[1];
-    this.element.style.left = this.position[0];
-    this.element.style.top = this.position[1];
-};
-
-moveable.prototype.beginMove = function(event){
-    document.lastChild.classList.toggle("grabbing");
-    that.mouseDiff = [that.position[0] - event.pageX, that.position[1] - event.pageY];
-    console.log("beginMove");
-    addEvent(document, 'mousemove', that.move);
-    addEvent(document, 'mouseup', that.endMove);
-};
-
-moveable.prototype.move = function(event){
-    that.position = [event.pageX + that.mouseDiff[0], event.pageY + that.mouseDiff[1]];
-    that.update();
-};
-
-moveable.prototype.endMove = function(event){
-    console.log('endMove');
-    document.lastChild.classList.toggle("grabbing");
-    removeEvent(document, 'mousemove', that.move);
-    removeEvent(document, 'mouseup', that.endMove);
-};
-
-moveable.prototype.setValue = function(possize, value, xy){
-    if (value > this["max" + possize][xy]){value = this["max" + possize][xy];}
-    if (value < this["min" + possize][xy]){value = this["min" + possize][xy];}
-    this[possize][xy] = value;
-};
 
 
 
 /* handle */
-function resizer(element, container, sides){
+function resizer(container, sides, id){
     var that = this;
     this.sides = sides;
-    this.element = element;
+    this.element = makeElement("div",id,sides,container.element);
     this.container = container;
     this.beginDrag = function(event){
         event.stopPropagation();
@@ -119,6 +187,9 @@ function resizer(element, container, sides){
         that.positionInit = [that.container.position[0], that.container.position[1]];
         addEvent(document, 'mousemove', that.drag);
         addEvent(document, 'mouseup', that.endDrag);
+        for(var i in that.sides){
+            document.body.classList.add(that.sides[i]);
+        }
         console.log("begin drag");
     }
     
@@ -126,7 +197,6 @@ function resizer(element, container, sides){
         that.mouse = [event.pageX, event.pageY];
         for(var i in that.sides){
             that["drag" + that.sides[i]]();
-            console.log(that.sides[i]);
         }
         that.container.update();
     }
@@ -134,6 +204,9 @@ function resizer(element, container, sides){
     this.endDrag = function(event){
         removeEvent(document, 'mousemove', that.drag);
         removeEvent(document, 'mouseup', that.endDrag);
+        for(var i in that.sides){
+            document.body.classList.remove(that.sides[i]);
+        }
         console.log("end drag");
     }
     
