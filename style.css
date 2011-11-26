@@ -1,5 +1,10 @@
 body{background:  #e0d4c0 no-repeat center center ;overflow:scroll;font-family:sans-serif;
 }
+#preloader{
+    width:0;
+    height:0;
+    background: url('b.jpg') no-repeat -9999px -9999px;
+}
 #dashed{
     background: url('arrow.png') no-repeat bottom right;
     position:absolute;
@@ -14,15 +19,23 @@ body{background:  #e0d4c0 no-repeat center center ;overflow:scroll;font-family:s
     color:#76664D;
     font-size:2em;
     line-height:1em;
-    -webkit-user-select:none;
-    -moz-user-select:none;  
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    user-select: none;
 }
-body p{
+#dashed p{
     width:6.6em;
     border:4px solid #76664D;
     border-radius:20px;
     margin:-4px 2em 1.5em -4px;
     padding: 1.5em .5em;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    user-select: none;
 }
 
 
@@ -36,27 +49,64 @@ body p{
     width:400px;
     height:400px;
     text-align:center;
-    -webkit-user-select:none;
-    -moz-user-select:none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    user-select: none;
     cursor:-webkit-grab;
     cursor:-moz-grab;
     color:#fff;
     border-radius:10px;
     box-shadow:0px 0px 8px #000;
-    -webkit-transition:.2s box-shadow; -moz-transition: .2s box-shadow;
+    -webkit-transition:.5s box-shadow; -moz-transition: .5s box-shadow;
 } 
-.block:hover{box-shadow:0px 0px 15px #000;-webkit-transition:.2s box-shadow; -moz-transition: .2s box-shadow;}
 
 .block *{
-    -webkit-user-select:none;
-    -moz-user-select:none;
-    -webkit-user-drag:none;
+    -webkit-user-select: none;
+    -khtml-user-select: none;
+    -moz-user-select: none;
+    -o-user-select: none;
+    user-select: none;
 }
-.block:active{cursor:-webkit-grabbing;cursor:-moz-grabbing;}
+.block:active{
+    cursor:-webkit-grabbing;
+    cursor:-moz-grabbing;
+    box-shadow:0px 0px 15px #000;
+    -webkit-transition:.5s box-shadow;
+    -moz-transition: .5s box-shadow;
+    }
 .block div{position:absolute;}
-.block a , .block a.hidden, .block:hover a.hidden{display:block;-webkit-transition:.2s opacity;-moz-transition:.2s opacity;font-size:2em;line-height:.5em;background: rgb(255,0,0); opacity:0;cursor:pointer; text-decoration:none; color:rgb(255,255,255); height:20px; width:20px; position:absolute; top:-20px;left:-20px;padding:10px;border-radius:20px;z-index:2000;}
-.block:hover a:hover{opacity:1;-webkit-transition:.2s opacity;-moz-transition:.2s opacity;}
-.block:hover a{opacity:0.3;-webkit-transition:.2s opacity;-moz-transition:.2s opacity;}
+.block a , .block a.hidden, .block:hover a.hidden{
+    display:block;
+    -webkit-transition:.5s background, .5s color;
+    -moz-transition:.5s background, .5s color;
+    font-size:2em;
+    line-height:.5em;
+    color:rgba(87, 6, 9, 0);
+    background: rgba(255,53,53,0);
+    cursor:pointer;
+    text-decoration:none;
+    height:20px;
+    width:20px;
+    position:absolute;
+    top:-20px;
+    left:-20px;
+    padding:10px;
+    border-radius:20px;
+    z-index:2000;
+}
+.block:hover a:hover{
+    -webkit-transition:.5s background, .5s color;
+    -moz-transition:.5s background, .5s color;
+}
+.block:hover a{
+    -webkit-transition:.5s background, .5s color;
+    -moz-transition:.5s background, .5s color;
+    color:rgba(87, 6, 9, 1);
+    background: rgba(255,53,53,1);
+}
+.block a:active{box-shadow: 0px 0px 5px #000 inset;}
 .left,.right{width:20px;}
 .bottom,.top{height:20px;}
 
