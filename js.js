@@ -1,3 +1,28 @@
+/*
+TODO:
+-wrap everything in a function to prevent global variables
+--only return the variables that are needed (keep others private)
+
+-look at compatibility
+--addEventListener --> attachEvent
+--if neither addEventListener or attachEvent exist, element.onevent = function
+--is stopPropagation the best way to do it? I see {window.event.cancelBubble = true; window.event.returnValue false} or {event.stopPropagation(); event.preventDefault()}
+
+-simplify and trim! goal: cut out 40 lines of code
+--posibility: resizer object does not need to exist
+--trim css styles (goal: cut 10 lines of code)
+
+-make more useable!
+--when creating a block, drag any which way, not only tl to br
+--make delete buttons smaller-looking but with the same padding to click on
+
+-start implementing server side stuff
+--timeline
+--save selections
+--user account
+*/
+
+
 window.onload = initializer;
 
 function initializer(){
@@ -43,11 +68,11 @@ var main = {
         main.moveables.pop(moveable);
         main.num -= 1;
     }
-}
+};
 
 /* Cypress's Generic Helpful Library */
 function addEvent(element, eventName, callback) {
-    if( element == null ) { return; }
+    if( element === null ) { return; }
     if( element.addEventListener ) {
         element.addEventListener(eventName,callback,false);
     }
@@ -56,7 +81,7 @@ function addEvent(element, eventName, callback) {
     }
 }
 function removeEvent(element, eventName, callback) {
-    if(element == null) { return; }
+    if(element === null) { return; }
     if(element.removeEventListener) {
         element.removeEventListener(eventName, callback, false);
     }
@@ -64,7 +89,6 @@ function removeEvent(element, eventName, callback) {
         element.detachEvent("on" + eventName, callback);
     }
 }
-
 function makeElement(type, id, classes, parent){
     var element = document.createElement(type);
     element.id = id;
@@ -110,24 +134,24 @@ function moveable(id,position,size){
     
     
 this.createHandles = function() {
-    var sides = {"top":["top"],"right":["right"],"bottom":["bottom"],"left":["left"],"tr":["top", "right"],"tl":["top", "left"],"br":["bottom", "right"],"bl":["bottom", "left"]}
-    for(i in sides){
+    var sides = {"top":["top"],"right":["right"],"bottom":["bottom"],"left":["left"],"tr":["top", "right"],"tl":["top", "left"],"br":["bottom", "right"],"bl":["bottom", "left"]};
+    for(var i in sides){
         this.handles = this.handles.concat(new resizer(this, sides[i], i));
     }
-}
+};
     this.createHandles();
 
     
     this.resize = function(sizeChange, sides){
         this.size.add(sizeChange);
-    }
+    };
 
     this.update = function(){
         this.element.style.width = this.size[0];
         this.element.style.height = this.size[1];
         this.element.style.left = this.position[0];
         this.element.style.top = this.position[1];
-    }
+    };
 
     this.beginMove = function(event){
         event.stopPropagation();
@@ -136,43 +160,48 @@ this.createHandles = function() {
         console.log("beginMove");
         addEvent(document, 'mousemove', that.move);
         addEvent(document, 'mouseup', that.endMove);
-    }
+    };
 
     this.move = function(event){
         that.position = [event.pageX + that.mouseDiff[0], event.pageY + that.mouseDiff[1]];
         that.update();
-    }
+    };
 
     this.endMove = function(event){
         console.log('endMove');
         document.body.classList.remove("grabbing");
         removeEvent(document, 'mousemove', that.move);
         removeEvent(document, 'mouseup', that.endMove);
-    }
+    };
 
     this.setValue = function(possize, value, xy){
         if (value > this["max" + possize][xy]){value = this["max" + possize][xy];}
         if (value < this["min" + possize][xy]){value = this["min" + possize][xy];}
         this[possize][xy] = value;
-    }
+    };
 
     this.startRemove = function(event){
         console.log("starting remove");
         event.stopPropagation();
-        addEvent(document, 'mouseup', that.remove);
-    }
+        addEvent(document, 'mouseup', that.cancelRemove);
+        addEvent(that.deleter, 'mouseup', that.remove);
+    };
+    
     this.remove = function(event){
         main.removeMoveable(that);
-        removeEvent(document, "mouseup", that.remove);
-    }
+        removeEvent(document, "mouseup", that.cancelRemove);
+        removeEvent(that.deleter, "mouseup", that.remove);        
+    };
+
+    this.cancelRemove = function(event){
+        console.log('remove canceled');
+        removeEvent(document, "mouseup", that.cancelRemove);
+        removeEvent(that.deleter, "mouseup", that.remove);
+    };
 
     addEvent(this.element, "mousedown", this.beginMove);
     addEvent(this.deleter, "mousedown", this.startRemove);
 }
-
-
-
-
 
 /* handle */
 function resizer(container, sides, id){
@@ -191,7 +220,7 @@ function resizer(container, sides, id){
             document.body.classList.add(that.sides[i]);
         }
         console.log("begin drag");
-    }
+    };
     
     this.drag = function(event){
         that.mouse = [event.pageX, event.pageY];
@@ -199,7 +228,7 @@ function resizer(container, sides, id){
             that["drag" + that.sides[i]]();
         }
         that.container.update();
-    }
+    };
     
     this.endDrag = function(event){
         removeEvent(document, 'mousemove', that.drag);
@@ -208,23 +237,25 @@ function resizer(container, sides, id){
             document.body.classList.remove(that.sides[i]);
         }
         console.log("end drag");
-    }
+    };
     
     this.dragright = function(){
         that.container.setValue("size",that.mouse[0] - that.mouseInit[0] + that.sizeInit[0],0);
-    }
+    };
     
     this.dragleft = function(){
         var test = that.container.setValue("size",-that.mouse[0] + that.mouseInit[0] + that.sizeInit[0],0);
         that.container.setValue("position",that.positionInit[0] - that.container.size[0] + that.sizeInit[0],0);
-    }
+    };
+    
     this.dragtop = function(){
         var test = that.container.setValue("size",that.sizeInit[1] + that.mouseInit[1] - that.mouse[1],1); 
         that.container.setValue("position",that.positionInit[1] - that.container.size[1] + that.sizeInit[1],1);
-    }
+    };
+    
     this.dragbottom = function(){
         that.container.setValue("size",that.mouse[1] - that.mouseInit[1] + that.sizeInit[1],1);
-    }
+    };
     
     addEvent(this.element, "mousedown", this.beginDrag);
 }
