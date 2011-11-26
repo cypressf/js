@@ -22,56 +22,26 @@ TODO:
 */
 
 
-closure = function(){
-    var main = {
-        po: Object,
-        num: 0,
-        moveables: [],
-        test: this,
-        init: function(){
-            console.log("starting");
-            addEvent(document,"mousedown",this.newMoveable);
-        },
-        newMoveable: function(event){
-            main.moveables = main.moveables.concat(new moveable("moveable" + main.num,[event.pageX-20,event.pageY-20],[0,0]));
-            var handle = main.moveables[main.num].handles[6];
-            main.moveables[main.num].update();
-            handle.mouseInit = [event.pageX, event.pageY];
-            handle.sizeInit = [handle.container.size[0], handle.container.size[1]];
-            handle.positionInit = [handle.container.position[0], handle.container.position[1]];
-            main.moveables[main.num].deleter.classList.add("hidden");
-            document.body.classList.add("bottom");
-            document.body.classList.add("right");
-            addEvent(document, "mousemove", main.resizeMoveable);
-            addEvent(document, "mouseup", main.endNewMoveable);
-        },
-        endNewMoveable: function(event){
-            main.moveables[main.num].deleter.classList.remove("hidden");
-            document.body.classList.remove("bottom");
-            document.body.classList.remove("right");
-            removeEvent(document, "mousemove", main.resizeMoveable);
-            removeEvent(document, "mouseup", main.endNewMoveable);
-            main.num += 1;
-        },
-        resizeMoveable: function(event){
-            main.moveables[main.num].handles[6].drag(event);
-        },
-        removeMoveable: function(moveable){
-            console.log("moveable" + moveable.id + " was removed");
-            document.body.removeChild(moveable.element);
-            main.moveables.pop(moveable);
-            main.num -= 1;
-        }
-    };
-
-    /* Cypress's Generic Helpful Library */
+var closure = function(){
+    var debug = true;
+    var num = 0;
+    var moveables = [];
+    
+    /* todo: only run init when the document is ready */
+    init();
+    
+    function write(string) {
+        if(debug) { console.log(string); }
+    }
     function addEvent(element, eventName, callback) {
-        if( element === null ) { return; }
+        if( element === null ) { return "no such element"; }
         if( element.addEventListener ) {
             element.addEventListener(eventName,callback,false);
+            return "added callback " + callback + " to event " + eventName;
         }
         else if( element.attachEvent ) {
             element.attachEvent("on" + eventName, callback);
+            return "added callback " + callback + " to event " + eventName + " (IE sucks, by the way)";
         }
     }
     function removeEvent(element, eventName, callback) {
@@ -83,7 +53,7 @@ closure = function(){
             element.detachEvent("on" + eventName, callback);
         }
     }
-    function makeElement(type, id, classes, parent){
+    function makeElement(type, id, classes, parent) {
         var element = document.createElement(type);
         element.id = id;
         for(var i in classes){
@@ -92,10 +62,40 @@ closure = function(){
         parent.appendChild(element);
         return element;
     }
-
+    function newMoveable(event){
+        moveables = moveables.concat(new moveable("moveable" + num,[event.pageX-20,event.pageY-20],[0,0]));
+        var handle = moveables[num].handles[6];
+        moveables[num].update();
+        handle.mouseInit = [event.pageX, event.pageY];
+        handle.sizeInit = [handle.container.size[0], handle.container.size[1]];
+        handle.positionInit = [handle.container.position[0], handle.container.position[1]];
+        moveables[num].deleter.classList.add("hidden");
+        document.body.classList.add("bottom");
+        document.body.classList.add("right");
+        addEvent(document, "mousemove", resizeMoveable);
+        addEvent(document, "mouseup", endNewMoveable);
+    }
+    function endNewMoveable(event){
+        moveables[num].deleter.classList.remove("hidden");
+        document.body.classList.remove("bottom");
+        document.body.classList.remove("right");
+        removeEvent(document, "mousemove", resizeMoveable);
+        removeEvent(document, "mouseup", endNewMoveable);
+        num += 1;
+    }
+    function resizeMoveable(event){
+        moveables[num].handles[6].drag(event);
+    }
+    function removeMoveable(moveable){
+        write("moveable" + moveable.id + " was removed");
+        document.body.removeChild(moveable.element);
+        moveables.pop(moveable);
+        num -= 1;
+    }
+    
     /* moveable */
     function moveable(id,position,size){
-        console.log("creating moveable: " + id);
+        write("creating moveable: " + id);
         this.id = id;
         var that = this;
         this.element = makeElement("div",id,["block"],document.body);
@@ -151,7 +151,7 @@ closure = function(){
             event.stopPropagation();
             document.body.classList.add("grabbing");
             that.mouseDiff = [that.position[0] - event.pageX, that.position[1] - event.pageY];
-            console.log("beginMove");
+            write("beginMove");
             addEvent(document, 'mousemove', that.move);
             addEvent(document, 'mouseup', that.endMove);
         };
@@ -162,7 +162,7 @@ closure = function(){
         };
 
         this.endMove = function(event){
-            console.log('endMove');
+            write('endMove');
             document.body.classList.remove("grabbing");
             removeEvent(document, 'mousemove', that.move);
             removeEvent(document, 'mouseup', that.endMove);
@@ -175,20 +175,20 @@ closure = function(){
         };
 
         this.startRemove = function(event){
-            console.log("starting remove");
+            write("starting remove");
             event.stopPropagation();
             addEvent(document, 'mouseup', that.cancelRemove);
             addEvent(that.deleter, 'mouseup', that.remove);
         };
 
         this.remove = function(event){
-            main.removeMoveable(that);
+            removeMoveable(that);
             removeEvent(document, "mouseup", that.cancelRemove);
             removeEvent(that.deleter, "mouseup", that.remove);        
         };
 
         this.cancelRemove = function(event){
-            console.log('remove canceled');
+            write('remove canceled');
             removeEvent(document, "mouseup", that.cancelRemove);
             removeEvent(that.deleter, "mouseup", that.remove);
         };
@@ -197,7 +197,7 @@ closure = function(){
         addEvent(this.deleter, "mousedown", this.startRemove);
     }
 
-    /* handle */
+    /* resizer */
     function resizer(container, sides, id){
         var that = this;
         this.sides = sides;
@@ -213,7 +213,7 @@ closure = function(){
             for(var i in that.sides){
                 document.body.classList.add(that.sides[i]);
             }
-            console.log("begin drag");
+            write("begin drag");
         };
 
         this.drag = function(event){
@@ -230,7 +230,7 @@ closure = function(){
             for(var i in that.sides){
                 document.body.classList.remove(that.sides[i]);
             }
-            console.log("end drag");
+            write("end drag");
         };
 
         this.dragright = function(){
@@ -254,10 +254,11 @@ closure = function(){
         addEvent(this.element, "mousedown", this.beginDrag);
     }
     
-    main.init();
+    function init(){
+        write("starting");
+        write(addEvent(document,"mousedown",newMoveable));
+    }
     
-    /* public methods (none right now) */
-    return {
-        
-    };
+    /* todo: return pointers to public methods or variables */
+    return {};
 }();
