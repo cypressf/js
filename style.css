@@ -1,46 +1,34 @@
-body{background:  #e0d4c0 no-repeat center center ;overflow:scroll;font-family:sans-serif;
+body{
+    background: #e0d4c0;
+    overflow:scroll;
+    font-family:sans-serif;
 }
+body *{position:absolute;}
 #preloader{
     width:0;
     height:0;
     background: url('b.jpg') no-repeat -9999px -9999px;
 }
-#dashed{
-    background: url('arrow.png') no-repeat bottom right;
-    position:absolute;
+#watermark{
     top:50%;
     left:50%;
-    margin-top:-3.55em;
-    margin-left:-4.75em;
-    border:4px dashed #76664D;
-    border-radius:20px;
-    padding:0;
     font-weight:400;
-    color:#76664D;
-    font-size:2em;
+    color:#CDBFA5;
+    text-shadow:1px 1px 0 #EBE4CE;
+    font-size:4em;
     line-height:1em;
+    width:7em;
+    margin: -1em 0 0 -3.5em;
     -webkit-user-select: none;
     -khtml-user-select: none;
     -moz-user-select: none;
     -o-user-select: none;
     user-select: none;
-}
-#dashed p{
-    width:6.6em;
-    border:4px solid #76664D;
-    border-radius:20px;
-    margin:-4px 2em 1.5em -4px;
-    padding: 1.5em .5em;
-    -webkit-user-select: none;
-    -khtml-user-select: none;
-    -moz-user-select: none;
-    -o-user-select: none;
-    user-select: none;
+    text-align:center;
 }
 
 
 .block{
-    position:absolute;
     top:100;
     left:100;
     margin:0;padding:0;
@@ -54,12 +42,14 @@ body{background:  #e0d4c0 no-repeat center center ;overflow:scroll;font-family:s
     -moz-user-select: none;
     -o-user-select: none;
     user-select: none;
+    cursor:move;
     cursor:-webkit-grab;
     cursor:-moz-grab;
     color:#fff;
     border-radius:10px;
     box-shadow:0px 0px 8px #000;
-    -webkit-transition:.5s box-shadow; -moz-transition: .5s box-shadow;
+    -webkit-transition:.5s box-shadow;
+    -moz-transition: .5s box-shadow;
 } 
 
 .block *{
@@ -70,13 +60,13 @@ body{background:  #e0d4c0 no-repeat center center ;overflow:scroll;font-family:s
     user-select: none;
 }
 .block:active{
+    cursor: move;
     cursor:-webkit-grabbing;
     cursor:-moz-grabbing;
     box-shadow:0px 0px 15px #000;
     -webkit-transition:.5s box-shadow;
     -moz-transition: .5s box-shadow;
     }
-.block div{position:absolute;}
 .block a , .block a.hidden, .block:hover a.hidden{
     display:block;
     -webkit-transition:.5s background, .5s color;
@@ -89,7 +79,6 @@ body{background:  #e0d4c0 no-repeat center center ;overflow:scroll;font-family:s
     text-decoration:none;
     height:20px;
     width:20px;
-    position:absolute;
     top:-20px;
     left:-20px;
     padding:10px;
@@ -110,8 +99,16 @@ body{background:  #e0d4c0 no-repeat center center ;overflow:scroll;font-family:s
 .left,.right{width:20px;}
 .bottom,.top{height:20px;}
 
-.block div:not(.bottom):not(.top){top:0;bottom:0;cursor:col-resize;}
-.block div:not(.right):not(.left){right:0;left:0;cursor:row-resize;}
+.block div:not(.bottom):not(.top){
+    top:0;
+    bottom:0;
+    cursor:col-resize;
+}
+.block div:not(.right):not(.left){
+    right:0;
+    left:0;
+    cursor:row-resize;
+}
 
 .top.left,.top.right,.bottom.left,.bottom.right{}
 
@@ -128,8 +125,16 @@ body{background:  #e0d4c0 no-repeat center center ;overflow:scroll;font-family:s
 
 body.left *, body.right *{cursor:col-resize !important;}
 body.top *, body.bottom *{cursor:row-resize !important;}
-body.grabbing *{cursor:-webkit-grabbing !important;cursor:-moz-grabbing !important;}
-body.grab *{cursor:-webkit-grab !important;cursor:-moz-grab !important;}
+body.grabbing *{
+    cursor:move !important;
+    cursor:-webkit-grabbing !important;
+    cursor:-moz-grabbing !important;
+}
+body.grab *{
+    cursor:move !important;
+    cursor:-webkit-grab !important;
+    cursor:-moz-grab !important;
+}
 body.top.right *{cursor:ne-resize !important;}
 body.top.left *{cursor:nw-resize !important;}
 body.bottom.right *{cursor:se-resize !important;}
