@@ -1,18 +1,31 @@
-body{background:url('background.png') #e0d4c0 no-repeat center center ;overflow:scroll;font-family:sans-serif;
+body{background:  #e0d4c0 no-repeat center center ;overflow:scroll;font-family:sans-serif;
 }
-body p{
-    color:#76664D;
-    font-weight:400;
-    font-size:2em;
+#dashed{
+    background: url('arrow.png') no-repeat bottom right;
     position:absolute;
     top:50%;
     left:50%;
-    margin-top:-1.25em;
-    margin-left:-4.5em;
+    margin-top:-3.55em;
+    margin-left:-4.75em;
+    border:4px dashed #76664D;
+    border-radius:20px;
+    padding:0;
+    font-weight:400;
+    color:#76664D;
+    font-size:2em;
     line-height:1em;
     -webkit-user-select:none;
-    -moz-user-select:none;
+    -moz-user-select:none;  
 }
+body p{
+    width:6.6em;
+    border:4px solid #76664D;
+    border-radius:20px;
+    margin:-4px 2em 1.5em -4px;
+    padding: 1.5em .5em;
+}
+
+
 .block{
     position:absolute;
     top:100;
