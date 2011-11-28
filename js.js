@@ -33,6 +33,7 @@ var closure = function(){
         this.classList.remove(classname);
     };
     Node.prototype.addListener = function(eventType, listener, useCapture){
+        write("adding a listener to " + this + "." + eventType);
         if( this.addEventListener ) { /* modern browser */
             this.addEventListener(eventType, listener, useCapture);
         }
@@ -44,6 +45,7 @@ var closure = function(){
         }
     };
     Node.prototype.removeListener = function(eventType, listener, useCapture){
+        write("removing a listener from " + this + "." + eventType);
         if(this.removeEventListener) {
             this.removeEventListener(eventType, listener, useCapture);
         }
@@ -158,10 +160,11 @@ var closure = function(){
         };
 
         this.update = function(){
-            this.element.style.width = this.size[0];
-            this.element.style.height = this.size[1];
-            this.element.style.left = this.position[0];
-            this.element.style.top = this.position[1];
+            write("updating");
+            this.element.style.width = this.size[0] + "px";
+            this.element.style.height = this.size[1] + "px";
+            this.element.style.left = this.position[0] + "px";
+            this.element.style.top = this.position[1] + "px";
         };
 
         this.beginMove = function(event){
@@ -287,7 +290,7 @@ var closure = function(){
     init();
     /* todo: return pointers to public methods or variables */
     return {
-        mv: moveables,
-        debug: debug
+        mv: getMoveables,
+        debug: setDebug
     };
 }();
