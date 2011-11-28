@@ -105,12 +105,14 @@ var closure = function(){
 
 
     function removeMoveable(moveable){
-        write("moveable" + moveable.id + " was removed");
+        
         document.body.removeChild(moveable.element);
         /* todo: make sure the element and the moveable object
         are deleted from memory. leaks are bad.*/
         moveable.element = null; // does this help?
         moveables.pop(moveable);
+        write("moveable" + moveable.id + " was removed");
+        
     }
     
     /* moveable */
@@ -202,9 +204,14 @@ var closure = function(){
         };
 
         this.remove = function(event){
-            removeMoveable(that);
             document.removeListener('mouseup', that.cancelRemove, false);
-            that.deleter.removeListener('mouseup', that.remove, false);        
+            that.deleter.removeListener('mouseup', that.remove, false);
+            that.element.removeListener("mousedown", that.beginMove, false);
+            that.deleter.removeListener("mousedown", that.startRemove, false);
+            for (i in that.handles){
+                that.handles[i].element.removeListener("mousedown", that.handles[i].beginDrag, false);
+            }
+            removeMoveable(that);
         };
 
         this.cancelRemove = function(event){
