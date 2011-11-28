@@ -1,0 +1,55 @@
+body{background:#000;overflow:scroll;}
+.block{
+    position:absolute;
+    top:100;
+    left:100;
+    margin:0;padding:0;
+    background:   no-repeat center center fixed #9df;
+    background-size: cover;
+    width:400px;
+    height:400px;
+    text-align:center;
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    cursor:-webkit-grab;
+    cursor:-moz-grab;
+    color:#fff;
+    font-family:sans-serif;
+} 
+.block *{
+    -webkit-user-select:none;
+    -moz-user-select:none;
+    -webkit-user-drag:none;
+}
+.block:active{cursor:-webkit-grabbing;cursor:-moz-grabbing;}
+.block div{position:absolute;}
+.block a , .block a.hidden, .block:hover a.hidden{display:block;-webkit-transition:.2s opacity;-moz-transition:.2s opacity;font-size:2em;line-height:.5em;background: rgb(255,0,0); opacity:0;cursor:pointer; text-decoration:none; color:rgb(255,255,255); height:20px; width:20px; position:absolute; top:-20px;left:-20px;padding:10px;border-radius:20px;z-index:2000;}
+.block:hover a:hover{opacity:1;-webkit-transition:.2s opacity;-moz-transition:.2s opacity;}
+.block:hover a{opacity:0.5;-webkit-transition:.2s opacity;-moz-transition:.2s opacity;}
+.left,.right{width:20px;}
+.bottom,.top{height:20px;}
+
+.block div:not(.bottom):not(.top){top:0;bottom:0;cursor:col-resize;}
+.block div:not(.right):not(.left){right:0;left:0;cursor:row-resize;}
+
+.top.left,.top.right,.bottom.left,.bottom.right{}
+
+.top.right{cursor:ne-resize}
+.top.left{cursor:nw-resize}
+
+.bottom.right{cursor:se-resize}
+.bottom.left{cursor:sw-resize;}
+
+.left{left:-10;}
+.right{right:-10;}
+.top{top:-10;}
+.bottom{bottom:-10;}
+
+body.left *, body.right *{cursor:col-resize !important;}
+body.top *, body.bottom *{cursor:row-resize !important;}
+body.grabbing *{cursor:-webkit-grabbing !important;cursor:-moz-grabbing !important;}
+body.grab *{cursor:-webkit-grab !important;cursor:-moz-grab !important;}
+body.top.right *{cursor:ne-resize !important;}
+body.top.left *{cursor:nw-resize !important;}
+body.bottom.right *{cursor:se-resize !important;}
+body.bottom.left *{cursor:sw-resize !important;}
