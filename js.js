@@ -73,7 +73,7 @@ var closure = function(){
         var position = [event.pageX-20,event.pageY-20];
         var size = [0,0];
         var mv = new moveable(position, size);
-        moveables = moveables.concat( mv );
+        moveables.push(mv);
         var handle = mv.handles[6];
         mv.update();
         handle.mouseInit = [event.pageX, event.pageY];
@@ -151,7 +151,7 @@ var closure = function(){
     this.createHandles = function() {
         var sides = {"top":["top"],"right":["right"],"bottom":["bottom"],"left":["left"],"tr":["top", "right"],"tl":["top", "left"],"br":["bottom", "right"],"bl":["bottom", "left"]};
         for(var i in sides){
-            this.handles = this.handles.concat(new resizer(this, sides[i], i));
+            this.handles.push(new resizer(this, sides[i], i));
         }
     };
         this.createHandles();
