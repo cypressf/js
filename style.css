@@ -100,13 +100,13 @@ body *{position:absolute;}
 .bottom,.top{height:20px;}
 
 .block div:not(.bottom):not(.top){
-    top:0;
-    bottom:0;
+    top:0px;
+    bottom:0px;
     cursor:col-resize;
 }
 .block div:not(.right):not(.left){
-    right:0;
-    left:0;
+    right:0px;
+    left:0px;
     cursor:row-resize;
 }
 
@@ -118,10 +118,10 @@ body *{position:absolute;}
 .bottom.right{cursor:se-resize}
 .bottom.left{cursor:sw-resize;}
 
-.left{left:-10;}
-.right{right:-10;}
-.top{top:-10;}
-.bottom{bottom:-10;}
+.left{left:-10px;}
+.right{right:-10px;}
+.top{top:-10px;}
+.bottom{bottom:-10px;}
 
 body.left *, body.right *{cursor:col-resize !important;}
 body.top *, body.bottom *{cursor:row-resize !important;}

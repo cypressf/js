@@ -1,6 +1,7 @@
 /*
 TODO:
--organize the giant closure and return pointers to any methods and variables that should be public
+-debugger
+--this is implemented in js, I don't need my own debug = true thing
 
 -look at compatibility
 --is stopPropagation the best way to do it? I see {window.event.cancelBubble = true; window.event.returnValue false} or {event.stopPropagation(); event.preventDefault()}
